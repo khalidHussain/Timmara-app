@@ -6,7 +6,17 @@ const actionReducer = (state, action) => {
       case 'all_products':
         return { ...state, allProducts: action.payload };  
       case 'add':
-        return {...state, allProducts: [...state.allProducts, action.payload]}
+        return {
+          ...state,
+          allProducts: {
+            ...state.allProducts,
+            ...action.payload,
+            results: [
+              ...state.allProducts.results,
+              ...action.payload.results
+            ]
+          }
+        }
       default:
         return state;
     }
@@ -15,30 +25,28 @@ const actionReducer = (state, action) => {
 const getAllProducts = (dispatch) => async () => {
     try {
         const response = await instance.get('/v1/products')
-        dispatch({type: 'all_products', payload: response.data.results})
+        dispatch({type: 'all_products', payload: response.data})
     } catch (error) {
         console.log(error)
     }  
 }
 
-const updateProduct = (dispatch) => async (id, quantity) => {
+const updateProduct = () => async (id, quantity) => {
   try {
-    const response = await instance.put('/v1/products/' + id , {quantity}).then(console.log('dddddddddddddddddd'))
+    await instance.put('/v1/products/' + id , {quantity})
     
-    console.log(response.data)
   } catch (error) {
     console.log(error)
   }
 }
 
-const fetchMore = (dispatch) => async () => {
+const fetchMore = (dispatch) => async (page) => {
   try {
-    
-    const response = await instance.get(`/v1/products?page=${2}`).then(console.log('.......'));
-    const data = response.data.results
+    const response = await instance.get(`/v1/products?page=${page}`).then(console.log('.......'));
+    const data = response.data
     dispatch({
       type: 'add',
-      dispatch: data
+      payload: data
     })
   } catch (error) {
     console.log(error)
@@ -57,6 +65,5 @@ export const {Provider, Context} = createDataContext(
   },
   {
    allProducts: [],
-   page2: []
   },
 );

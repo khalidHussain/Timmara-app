@@ -3,13 +3,11 @@ import { View, Text, FlatList, Image,TouchableOpacity } from "react-native";
 import { Context } from "../context/productContext";
 import { Button } from "react-native-elements";
 
-const ProductsScreen = ({navigation}) => {
+const ProductsScreen = ({ navigation }) => {
   const { state, getAllProducts, fetchMore } = useContext(Context);
   const [data, setData] = useState([]);
   const getP = async () => {
-    await getAllProducts().then(() => {
-      setData(state.allProducts);
-    });
+    await getAllProducts();
   };
 
   useEffect(() => {
@@ -17,8 +15,9 @@ const ProductsScreen = ({navigation}) => {
   }, []);
 
   useEffect(() => {
-    setData(state.allProducts);
+    setData(state.allProducts.results);
   }, [state]);
+  const { page, totalPages } = state.allProducts;
 
   return (
     <View>
@@ -29,27 +28,26 @@ const ProductsScreen = ({navigation}) => {
         columnWrapperStyle = {{marginBottom: 10}}
         numColumns = {2}
         ListFooterComponent = {
-            <View>
+            page < totalPages ? <View>
                 <Button title = 'View More' onPress = {() => {
-                    fetchMore()
+                    fetchMore(page + 1)
                 }}/>
-            </View>
+            </View> : <></>
         }
         ListFooterComponentStyle = {{marginBottom: 20}}
         renderItem={({ item }) => {
           return (
-              <TouchableOpacity onPress = {() => {
+              <TouchableOpacity key={item.id} onPress = {() => {
                 navigation.navigate('Detail', {product: item})
               }}>
                 <View style = {{marginRight: 3, borderWidth: 1, borderColor: 'gray', borderRadius: 5, paddingBottom: 5}}>
-              <Image
-                source={{uri: 'https://images.freeimages.com/images/large-previews/157/young-and-old-1399297.jpg'}}
-                style={{ width: 200, height: 200, borderRadius:5 }}
-              />
-              <Text style = {{fontWeight: 'bold'}}>{item.name}</Text>
-              {/* <Text>{item.quantity}</Text> */}
-              <Text>$400</Text>
-            </View>
+                  <Image
+                    source={{uri: 'https://images.freeimages.com/images/large-previews/157/young-and-old-1399297.jpg'}}
+                    style={{ width: 200, height: 200, borderRadius:5 }}
+                  />
+                  <Text style = {{fontWeight: 'bold'}}>{item.name}</Text>
+                  <Text>$400 ({ item.quantity })</Text>
+                </View>
             </TouchableOpacity>
           );
         }}
