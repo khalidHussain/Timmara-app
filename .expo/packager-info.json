@@ -1,0 +1,10 @@
+{
+  "devToolsPort": 19002,
+  "expoServerPort": null,
+  "packagerPort": 19000,
+  "expoServerNgrokUrl": "https://s2-vp9.khalidhucsain.timmara-app.exp.direct",
+  "packagerNgrokUrl": "https://packager.s2-vp9.khalidhucsain.timmara-app.exp.direct",
+  "ngrokPid": 13110,
+  "packagerPid": null,
+  "webpackServerPort": null
+}
